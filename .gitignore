@@ -1,0 +1,11 @@
+venv/
+.env/
+__pycache__/
+.vscode/
+
+dataset/
+dataset_final/
+test_results/
+project/
+
+*.pt

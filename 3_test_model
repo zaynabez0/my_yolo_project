@@ -1,0 +1,38 @@
+"""
+Script pour tester le modèle entrainé sur la base de test
+"""
+from ultralytics import YOLO
+import torch
+import os
+
+# ATTENTION : Adapte ce chemin si ton dossier 'runs' s'appelle différemment.
+MODEL_PATH = "project/yolo11_classification_v1/weights/best.pt" 
+DATASET_DIR = 'dataset'
+
+def test_modele():
+    if not os.path.exists(MODEL_PATH):
+        print(f"Erreur : Le modèle entraîné n'a pas été trouvé à l'emplacement {MODEL_PATH}.")
+        return
+    # Chargement du modèle entraîné
+    model = YOLO(MODEL_PATH)
+    
+    # On utilise model.val() qui est la fonction standard de validation dans YOLO
+    metrics = model.val(
+        data=DATASET_DIR, # Pointeur vers la racine du dataset
+        split='test',   
+        imgsz=128,        # Toujours la même taille que l'entraînement
+        device='cpu',     # On force CPU pour la validation si l'entraînement était sur CPU
+        project='test_results', # Dossier pour sauvegarder les résultats
+    )
+    
+    # Récupération des métriques clés
+    accuracy = metrics.top1
+    
+    print("\n--- RÉSULTATS DU TEST(Après 3 Époques) ---")
+    print(f"Précision : {accuracy:.2%}")
+    
+    # YOLO génère aussi un fichier 'results.json' pour l'analyse
+    print(f"\nAnalyse complète disponible dans : {metrics.save_dir}/results.json")
+
+if __name__ == "__main__":
+    test_modele()

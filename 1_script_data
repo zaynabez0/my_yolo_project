@@ -1,0 +1,67 @@
+"""
+Ce script permet de préparer les données dans le dossier "dataset_final" pour l'entrainement (80% train, 20% validation).
+"""
+import os # Pour les opérations sur les dossiers et fichiers
+import shutil # Pour copier les fichiers
+import random
+
+# On définit les chemins des dossiers
+DOSSIER_SOURCE = "dataset"  # Le dataset initial chargé de kaggle
+DOSSIER_CIBLE = "dataset_final"
+
+#---------------------------------------------------------------------------------
+# Création des dossiers train/chihuahua, train/muffin, val/chihuahua, val/muffin
+#---------------------------------------------------------------------------------
+def creer_dossiers():
+    # os.makedirs(name, mode=0o777, exist_ok=False) pour une création récursive des dossiers 
+    # exist_ok = False affiche erreur si le dossier existe déjà
+    # exist_ok = True si le dossier existe déjà ne fait rien
+    # os.path.join pour construire les chemins
+    os.makedirs(os.path.join(DOSSIER_CIBLE, "train", "chihuahua"), exist_ok=True)
+    os.makedirs(os.path.join(DOSSIER_CIBLE, "train", "muffin"), exist_ok=True)
+    os.makedirs(os.path.join(DOSSIER_CIBLE, "val", "chihuahua"), exist_ok=True)
+    os.makedirs(os.path.join(DOSSIER_CIBLE, "val", "muffin"), exist_ok=True)
+
+#---------------------------------------------------------------------------------
+# Répartition des images dans les dossiers train et val
+#---------------------------------------------------------------------------------
+def repartir_images():
+    classes = ["chihuahua", "muffin"]
+
+    for nom_classe in classes:
+        # Construire le chemin vers la classe source
+        chemin_source = os.path.join(DOSSIER_SOURCE,"train", nom_classe)
+
+        # contruire une liste d'images à partir du dossier source
+        liste_images_brutes = os.listdir(chemin_source) # de type liste ['image_001.jpg', 'image_002.jpg', ...]
+        
+        # [CORRECTION] Filtrer pour ne garder que les images (robustesse)
+        liste_images = [f for f in liste_images_brutes if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+        
+        # Mélanger la liste
+        random.shuffle(liste_images)
+
+        # Calculer le nombre d'images pour le train (80%)
+        nombre_train = int(len(liste_images) * 0.8)
+
+        # Slicing de liste_images
+        images_train = [liste_images[i] for i in range(nombre_train)]
+        images_val = [liste_images[i] for i in range(nombre_train, len(liste_images))]
+
+        # Boucle pour copier les images dans les dossiers cibles
+        for image in images_train:
+            src = os.path.join(chemin_source, image)
+            dst = os.path.join(DOSSIER_CIBLE, "train", nom_classe, image)
+            shutil.copy(src, dst)
+        for image in images_val:
+            src = os.path.join(chemin_source, image)
+            dst = os.path.join(DOSSIER_CIBLE, "val", nom_classe, image)
+            shutil.copy(src, dst)
+
+if __name__ == "__main__":
+    creer_dossiers()
+    print("Dossiers créés avec succès.")
+    repartir_images()
+    print("Images réparties avec succès.")
+
+

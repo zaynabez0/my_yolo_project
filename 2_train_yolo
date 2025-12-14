@@ -1,0 +1,35 @@
+"""
+Script d'entraînement pour un modèle YOLO11 en classification d'images.
+Utilise le dataset préparé dans le script 1_script_data.py.
+Le modèle entrainé sera sauvegardé dans le dossier 'project/yolo11_classification_v1'.
+
+"""
+from ultralytics import YOLO
+import torch
+
+def entrainer_yolo():
+    device = 'cpu' # '0' pour le premier GPU, ou 'cpu'
+
+    # Chargement du modèle YOLO11 en mode Classification Nano (-cls)
+    model = YOLO('yolo11n-cls.pt') 
+
+    # Définition des hyperparamètres 
+    hyperparams = {
+        'data': 'dataset_final', 
+        'epochs': 3,            
+        'imgsz': 128,           # Image Size : 128x128 pixels (pour accélérer sur CPU)
+        'batch': 16,            # Taille du lot
+        'device': device,      
+        'project': 'project',
+        'name': 'yolo11_classification_v1' # emplacement du modèle entrainé
+    }
+
+    print(f"Lancement de l'entraînement avec {hyperparams['epochs']} époques...")
+    
+    # [À COMPLÉTER] : Appeler la méthode model.train() avec les hyperparamètres
+    model.train(**hyperparams)
+
+
+
+if __name__ == "__main__":
+    entrainer_yolo()
