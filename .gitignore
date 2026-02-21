@@ -1,11 +1,25 @@
+# --- Environnement Virtuel  ---
 venv/
-.env/
+.env
 __pycache__/
+.DS_Store
+
+# --- VS Code ---
 .vscode/
 
+# --- Données et résultats ---
+*.jpg
+*.png
+*.jpeg
 dataset/
 dataset_final/
 test_results/
 project/
 
+# --- Modèles IA  ---
 *.pt
+*.pth
+*.safetensors
+runs/
+
+.DS_Store
